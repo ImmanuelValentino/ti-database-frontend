@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from 'next/link'; // Impor komponen Link
+import Link from 'next/link';
 
 export default function Home() {
   const [mahasiswaList, setMahasiswaList] = useState([]);
@@ -60,7 +60,9 @@ export default function Home() {
         try {
           const response = await fetch(`https://ti-database.vercel.app/api/mahasiswa/${searchTerm}`, { headers: { 'x-api-key': apiKey } });
           if (!response.ok) {
-            if (response.status === 404) throw new Error(`Mahasiswa dengan NIM ${searchTerm} tidak ditemukan.`);
+            if (response.status === 404) {
+              throw new Error(`Mahasiswa dengan NIM ${searchTerm} tidak ditemukan.`);
+            }
             throw new Error("Gagal mencari NIM");
           }
           const result = await response.json();
