@@ -13,6 +13,12 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const limit = 10;
 
+  // State untuk form tambah mahasiswa
+  const [newMahasiswa, setNewMahasiswa] = useState({ nim: '', nama: '', jurusan: '' });
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const fetchMahasiswa = useCallback(async (page, search) => {
     setLoading(true);
     setError(null);
@@ -87,30 +93,57 @@ export default function Home() {
     fetchMahasiswa(newPage, searchTerm);
   }
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewMahasiswa(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleAddMahasiswa = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormError('');
+    setFormSuccess('');
+
+    try {
+      const apiUrl = 'https://ti-database.vercel.app/api/mahasiswa';
+      const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+        },
+        body: JSON.stringify(newMahasiswa),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        const errorMessage = Array.isArray(result.error)
+          ? result.error.map(e => e.message).join(', ')
+          : result.error;
+        throw new Error(errorMessage || 'Gagal menambahkan data');
+      }
+
+      setFormSuccess('Mahasiswa berhasil ditambahkan!');
+      setNewMahasiswa({ nim: '', nama: '', jurusan: '' });
+      fetchMahasiswa(1, '');
+      setCurrentPage(1);
+
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const totalPages = Math.ceil(totalCount / limit);
 
   const renderTableContent = () => {
-    if (loading) {
-      return (
-        <tr>
-          <td colSpan="4" className="text-center py-4 text-gray-500">Mencari data...</td>
-        </tr>
-      );
-    }
-    if (error) {
-      return (
-        <tr>
-          <td colSpan="4" className="text-center py-4 text-red-500">Error: {error}</td>
-        </tr>
-      );
-    }
-    if (mahasiswaList.length === 0) {
-      return (
-        <tr>
-          <td colSpan="4" className="text-center py-4 text-gray-500">Data tidak ditemukan.</td>
-        </tr>
-      );
-    }
+    if (loading) return <tr><td colSpan="4" className="text-center py-4 text-gray-500">Mencari data...</td></tr>;
+    if (error) return <tr><td colSpan="4" className="text-center py-4 text-red-500">Error: {error}</td></tr>;
+    if (mahasiswaList.length === 0) return <tr><td colSpan="4" className="text-center py-4 text-gray-500">Data tidak ditemukan.</td></tr>;
+
     return mahasiswaList.map((mhs) => (
       <tr key={mhs.nim} className="bg-white border-b hover:bg-gray-50">
         <td className="px-6 py-4 font-medium text-gray-900">{mhs.nim}</td>
@@ -156,23 +189,36 @@ export default function Home() {
         </div>
 
         <div className="flex justify-between items-center mt-6">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage <= 1 || loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-          >
-            Previous
-          </button>
-          <span className="text-sm font-medium">
-            Page {currentPage} of {totalPages > 0 ? totalPages : 1}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage >= totalPages || loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-          >
-            Next
-          </button>
+          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1 || loading} className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Previous</button>
+          <span className="text-sm font-medium">Page {currentPage} of {totalPages > 0 ? totalPages : 1}</span>
+          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages || loading} className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
+        </div>
+
+        <div className="mt-10 pt-6 border-t">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">Tambah Mahasiswa Baru</h2>
+          <form onSubmit={handleAddMahasiswa}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label htmlFor="nim" className="block text-sm font-medium text-gray-700">NIM</label>
+                <input type="text" name="nim" id="nim" value={newMahasiswa.nim} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="nama" className="block text-sm font-medium text-gray-700">Nama</label>
+                <input type="text" name="nama" id="nama" value={newMahasiswa.nama} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="jurusan" className="block text-sm font-medium text-gray-700">Jurusan</label>
+                <input type="text" name="jurusan" id="jurusan" value={newMahasiswa.jurusan} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+              </div>
+            </div>
+            <div className="text-center">
+              <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:bg-gray-400">
+                {isSubmitting ? 'Menambahkan...' : 'Tambah Mahasiswa'}
+              </button>
+            </div>
+            {formError && <p className="text-red-500 text-center mt-4">{formError}</p>}
+            {formSuccess && <p className="text-green-500 text-center mt-4">{formSuccess}</p>}
+          </form>
         </div>
       </div>
     </main>
