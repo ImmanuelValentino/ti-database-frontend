@@ -153,7 +153,6 @@ export default function Home() {
       }
 
       alert('Mahasiswa berhasil dihapus!');
-      // Muat ulang data untuk memperbarui tabel. Cek jika halaman menjadi kosong.
       if (mahasiswaList.length === 1 && currentPage > 1) {
         handlePageChange(currentPage - 1);
       } else {
@@ -231,7 +230,42 @@ export default function Home() {
         <div className="mt-10 pt-6 border-t">
           <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">Tambah Mahasiswa Baru</h2>
           <form onSubmit={handleAddMahasiswa}>
-            {/* ... Form Inputs ... */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label htmlFor="nim" className="block text-sm font-medium text-gray-700">NIM</label>
+                <input type="text" name="nim" id="nim" value={newMahasiswa.nim} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="nama" className="block text-sm font-medium text-gray-700">Nama</label>
+                <input type="text" name="nama" id="nama" value={newMahasiswa.nama} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="jurusan" className="block text-sm font-medium text-gray-700">Jurusan</label>
+                <select
+                  name="jurusan"
+                  id="jurusan"
+                  value={newMahasiswa.jurusan}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                >
+                  <option value="" disabled>Pilih Jurusan</option>
+                  <option value="Teknik Informatika">Teknik Informatika</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Ilmu Administrasi Bisnis">Ilmu Administrasi Bisnis</option>
+                  <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                  <option value="Akuntansi">Akuntansi</option>
+                  <option value="Manajemen">Manajemen</option>
+                </select>
+              </div>
+            </div>
+            <div className="text-center">
+              <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:bg-gray-400">
+                {isSubmitting ? 'Menambahkan...' : 'Tambah Mahasiswa'}
+              </button>
+            </div>
+            {formError && <p className="text-red-500 text-center mt-4">{formError}</p>}
+            {formSuccess && <p className="text-green-500 text-center mt-4">{formSuccess}</p>}
           </form>
         </div>
       </div>
