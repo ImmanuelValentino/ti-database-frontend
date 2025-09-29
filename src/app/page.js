@@ -13,7 +13,6 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const limit = 10;
 
-  // State untuk form tambah mahasiswa
   const [newMahasiswa, setNewMahasiswa] = useState({ nim: '', nama: '', jurusan: '' });
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
@@ -206,9 +205,25 @@ export default function Home() {
                 <label htmlFor="nama" className="block text-sm font-medium text-gray-700">Nama</label>
                 <input type="text" name="nama" id="nama" value={newMahasiswa.nama} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
               </div>
+              {/* === INPUT JURUSAN DIUBAH MENJADI DROPDOWN === */}
               <div>
                 <label htmlFor="jurusan" className="block text-sm font-medium text-gray-700">Jurusan</label>
-                <input type="text" name="jurusan" id="jurusan" value={newMahasiswa.jurusan} onChange={handleInputChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500" />
+                <select
+                  name="jurusan"
+                  id="jurusan"
+                  value={newMahasiswa.jurusan}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                >
+                  <option value="" disabled>Pilih Jurusan</option>
+                  <option value="Teknik Informatika">Teknik Informatika</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Ilmu Administrasi Bisnis">Ilmu Administrasi Bisnis</option>
+                  <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                  <option value="Akuntansi">Akuntansi</option>
+                  <option value="Manajemen">Manajemen</option>
+                </select>
               </div>
             </div>
             <div className="text-center">
