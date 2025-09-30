@@ -48,7 +48,7 @@ Sebuah aplikasi web yang dibuat dengan Next.js dan Tailwind CSS untuk menampilka
 
 Aplikasi ini dapat diakses secara langsung di:
 
-**https://medium.com/codelabs-unikom/deploy-next-js-dengan-mudah-menggunakan-vercel-4ce2183c93c0**
+**[https://medium.com/codelabs-unikom/deploy-next-js-dengan-mudah-menggunakan-vercel-4ce2183c93c0](https://ti-database-frontend.vercel.app/)**
 
 ---
 
